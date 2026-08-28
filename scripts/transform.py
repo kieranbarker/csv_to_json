@@ -1,28 +1,26 @@
-import csv
-import json
 from pathlib import Path
+
+import pandas as pd
 
 input_csv = Path("data/people.csv")
 output_json = Path("output/people.json")
 
 
 def main():
-    rows = []
+    # Read CSV, cast types, and strip whitespace from strings
+    df = pd.read_csv(
+        input_csv,
+        dtype={"id": int, "age": int},
+    )
+    df["name"] = df["name"].str.strip()
 
-    with input_csv.open("r", newline="", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        for r in reader:
-            rows.append(
-                {
-                    "id": int(r["id"]),
-                    "name": r["name"].strip(),
-                    "age": int(r["age"]),
-                }
-            )
-
+    # Ensure output directory exists and export to JSON
     output_json.parent.mkdir(parents=True, exist_ok=True)
-    output_json.write_text(
-        json.dumps(rows, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    df.to_json(
+        output_json,
+        orient="records",
+        indent=2,
+        force_ascii=False,
     )
 
 
