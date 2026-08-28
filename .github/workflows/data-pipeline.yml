@@ -2,6 +2,7 @@ name: data-pipeline
 
 on:
   pull_request:
+    branches: ["main"]
   push:
     branches: ["main"]
   workflow_dispatch:
@@ -21,11 +22,15 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version: "3.14"
+          cache: "pip"
+          cache-dependency-path: |
+            requirements.in
+            requirements.txt
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install pytest
+          python -m pip install --upgrade pip pip-tools
+          pip-sync requirements.txt
 
       - name: Transform CSV to JSON
         run: python scripts/transform.py
@@ -34,6 +39,8 @@ jobs:
         run: pytest -q
 
       - name: Upload generated JSON
+        # Only runs on push to main or manual trigger, NOT on PRs
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v7
         with:
           name: generated-data
