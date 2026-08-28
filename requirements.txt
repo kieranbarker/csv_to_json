@@ -8,11 +8,21 @@ colorama==0.4.6
     # via pytest
 iniconfig==2.3.0
     # via pytest
+numpy==2.5.2
+    # via pandas
 packaging==26.3
     # via pytest
+pandas==3.0.5
+    # via -r requirements.in
 pluggy==1.6.0
     # via pytest
 pygments==2.21.0
     # via pytest
 pytest==9.1.1
     # via -r requirements.in
+python-dateutil==2.9.0.post0
+    # via pandas
+six==1.17.0
+    # via python-dateutil
+tzdata==2026.3
+    # via pandas
